@@ -16,6 +16,8 @@ class CliConnection(Connection):
 
     @contextmanager
     def update_config(self, user):
+        if self.is_connected == True:
+            self.close()
         # Updates user in config
         # Depends on SSH to already have SSH key configured on remote machine
         # SSH connection closes after contextmanager is finished
@@ -42,9 +44,9 @@ class Taskset(object):
 class CliTaskset(Taskset):
     @task
     def which_user(self):
-        self.run("whoami")
-        with self.context.update_config(user="bar"):
-            self.run("whoami")
+        self.run("whoami") # bar
+        with self.context.update_config(user="root"):
+            self.run("whoami") # root
 
 ns = Collection()
 ns.add_collection(Collection.from_class(CliTaskset(context)), name="clitaskset")
